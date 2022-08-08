@@ -128,12 +128,7 @@ class HBNBCommand(cmd.Cmd):
             print("** class doesn't exist **")
             return
 
-        print(HBNBCommand.classes)
-        print("#####")
-        print(arg[0])
         new_instance = HBNBCommand.classes[arg[0]]()
-        print("#####")
-        print(new_instance)
         # Param Treatment
         # Loop with start on first param
         for param in arg[1:]:
@@ -157,9 +152,7 @@ class HBNBCommand(cmd.Cmd):
                         continue
             # Setting attribute to instance
             setattr(new_instance, key, value)
-        print("ANTES DEL SAVE")
         new_instance.save()
-        print("####-----------#######")
         print(new_instance.id)
 
     def help_create(self):

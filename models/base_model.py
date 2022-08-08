@@ -3,7 +3,7 @@
 import uuid
 import models
 from datetime import datetime
-from sqlalchemy import Column, ForeignKey, Integer, String, DateTime
+from sqlalchemy import Column, String, DateTime
 from sqlalchemy.ext.declarative import declarative_base
 
 
@@ -35,7 +35,6 @@ class BaseModel:
                 self.updated_at = datetime.now()
             if not self.id:
                 self.id = str(uuid.uuid4())
-                
 
     def __str__(self):
         """Returns a string representation of the instance"""
