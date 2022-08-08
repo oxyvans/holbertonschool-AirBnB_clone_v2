@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 """"""
 import models
-from models.base_model import BaseModel, Base
+from models.base_model import Base
 from os import getenv
 from sqlalchemy import create_engine
 from sqlalchemy.orm import scoped_session
@@ -41,9 +41,9 @@ class DBStorage:
         """"""
         newDict = {}
         for clss in classes:
-            if cls is None or cls == classes[clss] or cls == clss:
-                objs = self.__session.query(classes[clss]).all()
-                for obj in objs:
+            if cls is None or cls == classes[clss]:
+                objects = self.__session.query(classes[clss]).all()
+                for obj in objects:
                     key = type(obj).__name__ + '.' + obj.id
                     newDict[key] = obj
         return newDict
