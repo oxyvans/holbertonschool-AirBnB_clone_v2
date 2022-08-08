@@ -2,16 +2,12 @@
 """ Place Module for HBNB project """
 import models
 from os import getenv
-from models.amenity import Amenity
 from models.base_model import Base, BaseModel
 from sqlalchemy import Column, ForeignKey, String, Integer, Float, Table
 from sqlalchemy.orm import relationship
 
-from models.review import Review
- # task 10
-place_amenity = Table('place_amenity',Base.metadata,
-                Column('place_id', String(60), ForeignKey('places.id'), primary_key=True, nullable=False),
-                Column('amenity_id', String(60), ForeignKey('amenities.id'), primary_key=True, nullable=False))
+if getenv('HBNB_TYPE_STORAGE') == 'db':
+    place_amenity = Table("place_amenity", Base.metadata, Column("place_id", String(60), ForeignKey("places.id", onupdate='CASCADE', ondelete='CASCADE'), primary_key=True), Column("amenity_id", String(60), ForeignKey("amenities.id", onupdate='CASCADE', ondelete='CASCADE'), primary_key=True))
 
 
 class Place(BaseModel, Base):
@@ -27,13 +23,12 @@ class Place(BaseModel, Base):
     price_by_night = Column(Integer, nullable=False, default=0)
     latitude = Column(Float, nullable=True)
     longitude = Column(Float, nullable=True)
-
-    if getenv("HBNB_TYPE_STORAGE") == "db":
+    
+    if getenv('HBNB_TYPE_STORAGE') == 'db':
         reviews = relationship("Review", cascade="all, delete-orphan", \
                             backref='place')
-        # taks 10 
-        amenities = relationship('Amenity', secondary='place_amenity', \
-                            viewonly=False, backref="place")
+        amenities = relationship("Amenity", secondary=place_amenity, 
+                                  backref="places", viewonly=False)
     else:
         @property
         def reviews(self):
@@ -48,7 +43,11 @@ class Place(BaseModel, Base):
         def amenities(self):
             amenityList = []
             for amenity in models.storage.all(Amenity).values():
-                if amenity.id == Place.amenity_ids:
+                if self.id == amenity.place_id:
                     amenityList.append(models.storage.all(Amenity)[amenity])
             return amenityList
 
+        @amenities.setter
+        def amenities(self, amenity_object):
+            if type(amenity_object).__name__ == "Amenity":
+                self.amenity_ids.append(amenity_object.id)
