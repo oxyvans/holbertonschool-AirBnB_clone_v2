@@ -1,6 +1,8 @@
 #!/usr/bin/python3
 """ Console Module """
 import cmd
+import sys
+from hashlib import new
 import shlex
 from models.base_model import BaseModel
 from models.__init__ import storage
@@ -126,7 +128,12 @@ class HBNBCommand(cmd.Cmd):
             print("** class doesn't exist **")
             return
 
+        print(HBNBCommand.classes)
+        print("#####")
+        print(arg[0])
         new_instance = HBNBCommand.classes[arg[0]]()
+        print("#####")
+        print(new_instance)
         # Param Treatment
         # Loop with start on first param
         for param in arg[1:]:
@@ -150,9 +157,10 @@ class HBNBCommand(cmd.Cmd):
                         continue
             # Setting attribute to instance
             setattr(new_instance, key, value)
-        storage.save()
+        print("ANTES DEL SAVE")
+        new_instance.save()
+        print("####-----------#######")
         print(new_instance.id)
-        storage.save()
 
     def help_create(self):
         """ Help information for the create method """
@@ -234,11 +242,10 @@ class HBNBCommand(cmd.Cmd):
             if args not in HBNBCommand.classes:
                 print("** class doesn't exist **")
                 return
-            for k, v in storage._FileStorage__objects.items():
-                if k.split('.')[0] == args:
-                    print_list.append(str(v))
+            for k, v in storage.all(self.classes[args]).items():
+                print_list.append(str(v))
         else:
-            for k, v in storage._FileStorage__objects.items():
+            for k, v in storage.all().items():
                 print_list.append(str(v))
 
         print(print_list)

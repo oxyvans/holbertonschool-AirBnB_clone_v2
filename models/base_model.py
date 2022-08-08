@@ -3,7 +3,6 @@
 import uuid
 import models
 from datetime import datetime
-import sqlalchemy
 from sqlalchemy import Column, ForeignKey, Integer, String, DateTime
 from sqlalchemy.ext.declarative import declarative_base
 
@@ -19,17 +18,24 @@ class BaseModel:
 
     def __init__(self, *args, **kwargs):
         """Instatntiates a new model"""
-        from models import storage
-        self.id = str(uuid.uuid4())
-        self.created_at = datetime.now()
-        self.updated_at = datetime.now()
-        if kwargs:
+        if not kwargs:
+            self.id = str(uuid.uuid4())
+            self.created_at = datetime.now()
+            self.updated_at = datetime.now()
+        else:
             for key, value in kwargs.items():
                 if key in ("created_at", "updated_at"):
                     value = datetime.strptime(kwargs['updated_at'],
                                               '%Y-%m-%dT%H:%M:%S.%f')
-                if "__class__" not in key:
+                if ("__class__", "_sa_instance_state") not in key:
                     setattr(self, key, value)
+            if "created_at" not in kwargs:
+                self.created_at = datetime.now()
+            if "updated_at" not in kwargs:
+                self.updated_at = datetime.now()
+            if not self.id:
+                self.id = str(uuid.uuid4())
+                
 
     def __str__(self):
         """Returns a string representation of the instance"""

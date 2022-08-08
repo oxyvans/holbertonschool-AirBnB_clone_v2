@@ -54,6 +54,7 @@ class DBStorage:
 
     def save(self):
         """"""
+        print("INTENTANDO GUARDAR")
         self.__session.commit()
 
     def delete(self, obj=None):
