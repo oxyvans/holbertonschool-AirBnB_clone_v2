@@ -1,16 +1,22 @@
 #!/usr/bin/python3
-""" Place Module for HBNB project """
+"""Place class for AirBnb project"""
 import models
 from os import getenv
 from models.base_model import Base, BaseModel
 from sqlalchemy import Column, ForeignKey, String, Integer, Float, Table
 from sqlalchemy.orm import relationship
 
-place_amenity = Table("place_amenity", Base.metadata, Column("place_id", String(60), ForeignKey("places.id", onupdate='CASCADE', ondelete='CASCADE'), primary_key=True), Column("amenity_id", String(60), ForeignKey("amenities.id", onupdate='CASCADE', ondelete='CASCADE'), primary_key=True))
+place_amenity = Table("place_amenity", Base.metadata, Column("place_id",
+                      String(60), ForeignKey("places.id", onupdate='CASCADE',
+                                             ondelete='CASCADE'),
+                                             primary_key=True),
+                      Column("amenity_id", String(60),
+                             ForeignKey("amenities.id", onupdate='CASCADE',
+                                        ondelete='CASCADE'), primary_key=True))
 
 
 class Place(BaseModel, Base):
-    """ A place to stay """
+    """Place class that creates places table"""
     __tablename__ = "places"
     city_id = Column(String(60), ForeignKey("cities.id"), nullable=False)
     user_id = Column(String(60), ForeignKey("users.id"), nullable=False)
@@ -22,12 +28,12 @@ class Place(BaseModel, Base):
     price_by_night = Column(Integer, nullable=False, default=0)
     latitude = Column(Float, nullable=True)
     longitude = Column(Float, nullable=True)
-    
+
     if getenv('HBNB_TYPE_STORAGE') == 'db':
-        reviews = relationship("Review", cascade="all, delete-orphan", \
-                            backref='place')
-        amenities = relationship("Amenity", secondary=place_amenity, 
-                                  backref="places", viewonly=False)
+        reviews = relationship("Review", cascade="all, delete-orphan",
+                               backref='place')
+        amenities = relationship("Amenity", secondary=place_amenity,
+                                 backref="places", viewonly=False)
     else:
         @property
         def reviews(self):
@@ -37,7 +43,7 @@ class Place(BaseModel, Base):
                 if self.id == review.place_id:
                     reviewsList.append(models.storage.all(Review)[review])
             return reviewsList
-        #task 10
+
         @property
         def amenities(self):
             amenityList = []

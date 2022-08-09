@@ -1,5 +1,5 @@
 #!/usr/bin/python3
-""" State Module for HBNB project """
+"""State class for AirBnb project"""
 from os import getenv
 import models
 from models.base_model import BaseModel, Base
@@ -9,7 +9,7 @@ from sqlalchemy.orm import relationship
 
 
 class State(BaseModel, Base):
-    """ State class """
+    """State class that creates states table"""
     __tablename__ = "states"
     name = Column(String(128), nullable=False)
 
