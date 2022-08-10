@@ -101,6 +101,21 @@ class TestDB(unittest.TestCase):
         self.assertEqual(st.id, query[0][0])
         cursor.close()
 
+    def test_delete(self):
+        """Test delete method."""
+        st = State(name="Rocha")
+        self.storage._DBStorage__session.add(st)
+        self.storage._DBStorage__session.commit()
+        self.storage.delete(st)
+        self.assertIn(st, list(self.storage._DBStorage__session.deleted))
+
+    def test_delete_none(self):
+        """Test delete with None."""
+        try:
+            self.storage.delete(None)
+        except Exception:
+            self.fail
+
 
 if __name__ == "__main__":
     unittest.main()
