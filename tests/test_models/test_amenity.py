@@ -1,70 +1,58 @@
 #!/usr/bin/python3
-"""
-    Test Case For Amenity Model and its Test
-"""
-from models.base_model import BaseModel
-from models.amenity import Amenity
+""" module for state reviews"""
 import unittest
-import inspect
-import time
-from datetime import datetime
-import pep8 as pcs
-from unittest import mock
-import models
+import pep8
+from models.amenity import Amenity
+from models.base_model import BaseModel
+import os
 
 
 class TestAmenity(unittest.TestCase):
-    """
-        unitesst for user class
-    """
+    """ a class for testing Amenity"""
 
-    def issub_class(self):
-        """
-            test if Amenity class is sub class of base model
-        """
-        insta = Amenity()
-        self.assertIsInstance(insta, BaseModel)
-        self.assertTrue(hasattr(insta, "id"))
-        self.assertTrue(hasattr(insta, "created_at"))
-        self.assertTrue(hasattr(insta, "update_at"))
+    @classmethod
+    def setUpClass(cls):
+        """ Example Data """
+        cls.amen = Amenity()
+        cls.amen.name = "Wifi"
 
-    def test_name(self):
-        """
-            test class atribute name
-        """
-        insta = Amenity()
-        self.assertTrue(hasattr(insta, "name"))
-        if models.sType == "db":
-            self.assertEqual(insta.name, None)
-        else:
-            self.assertEqual(insta.name, None)
+    def teardown(cls):
+        """ tear down Class """
+        del cls.amen
 
-    def test_to_dictAmenity(self):
-        """
-            test to dict method with Amenity and the type
-            and content
-        """
-        insta = Amenity()
-        dict_cont = insta.to_dict()
-        self.assertEqual(type(dict_cont), dict)
-        for attr in insta.__dict__:
-            self.assertTrue(attr in dict_cont)
-            self.assertTrue("__class__" in dict_cont)
+    def tearDown(self):
+        try:
+            os.remove('file.json')
+        except FileNotFoundError:
+            pass
 
-    def test_dict_value(self):
-        """
-            test the returned dictionar values
-        """
-        time_format = "%Y-%m-%dT%H:%M:%S.%f"
-        insta = Amenity()
-        dict_con = insta.to_dict()
-        self.assertEqual(dict_con["__class__"], "Amenity")
-        self.assertEqual(type(dict_con["created_at"]), str)
-        self.assertEqual(type(dict_con["updated_at"]), str)
-        self.assertEqual(
-            dict_con["created_at"],
-            insta.created_at.strftime(time_format)
-        )
-        self.assertEqual(
-            dict_con["updated_at"],
-            insta.updated_at.strftime(time_format))
+    def test_Amenity_pep8(self):
+        """check for pep8 """
+        style = pep8.StyleGuide(quiet=True)
+        p = style.check_files(["models/amenity.py"])
+        self.assertEqual(p.total_errors, 0, 'fix Pep8')
+
+    def test_Amenity_docs(self):
+        """ check for docstring """
+        self.assertIsNotNone(Amenity.__doc__)
+
+    def test_Amenity_attribute_types(self):
+        """ test Amenity attribute types """
+        self.assertEqual(type(self.amen.name), str)
+
+    def test_Amenity_is_subclass(self):
+        """ test if Amenity is subclass of BaseModel """
+        self.assertTrue(issubclass(self.amen.__class__, BaseModel), True)
+
+    def test_Amenity_save(self):
+        """ test save() command """
+        self.amen.save()
+        self.assertNotEqual(self.amen.created_at, self.amen.updated_at)
+
+    def test_Amenity_sa_instance_state(self):
+        """ test is _sa_instance_state has been removed """
+        self.assertNotIn('_sa_instance_state', self.amen.to_dict())
+
+
+if __name__ == "__main__":
+    unittest.main()

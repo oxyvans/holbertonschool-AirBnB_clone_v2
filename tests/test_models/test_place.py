@@ -1,176 +1,81 @@
 #!/usr/bin/python3
-"""
-    Test Case For Place Model and its Test
-"""
-from models.base_model import BaseModel
-from models.place import Place
+""" module for state reviews"""
 import unittest
-import inspect
-import time
-from datetime import datetime
-import pep8 as pcs
-from unittest import mock
-import models
+import pep8
+from models.place import Place
+from models.base_model import BaseModel
+import os
 
 
 class TestPlace(unittest.TestCase):
-    """
-        unitesst for Place class
-    """
+    """ a class for testing Place"""
 
-    def issub_class(self):
-        """
-            test if Place class is sub class of base model
-        """
-        place = Place()
-        self.assertIsInstance(place, BaseModel)
-        self.assertTrue(hasattr(place, "id"))
-        self.assertTrue(hasattr(place, "created_at"))
-        self.assertTrue(hasattr(place, "update_at"))
+    @classmethod
+    def setUpClass(cls):
+        """ Example Data """
+        cls.place = Place()
+        cls.place.city_id = "san-francisco"
+        cls.place.user_id = "madame-tabitha"
+        cls.place.name = "Gilded Lily"
+        cls.place.description = "A fragrant paradise where flowers bloom"
+        cls.place.number_rooms = 30
+        cls.place.number_bathrooms = 5
+        cls.place.max_guest = 3
+        cls.place.price_by_night = 500
+        cls.place.latitude = 37.77
+        cls.place.longitude = 122.42
+        cls.place.amenity_ids = ["1324-asdf"]
 
-    def test_city_id_attr(self):
-        """
-            Test Class attribute
-        """
-        place = Place()
-        self.assertTrue(hasattr(place, "city_id"))
-        if models.sType == "db":
-            self.assertEqual(place.city_id, None)
+    @classmethod
+    def teardown(cls):
+        """ tear down Class """
+        del cls.state
 
-    def test_user_id_attr(self):
-        """
-            Test Class attribute
-        """
-        place = Place()
-        self.assertTrue(hasattr(place, "user_id"))
-        if models.sType == "db":
-            self.assertEqual(place.user_id, None)
-        else:
+    def tearDown(self):
+        try:
+            os.remove('file.json')
+        except FileNotFoundError:
             pass
 
-    def test_name_attr(self):
-        """
-            Test Class attribute
-        """
-        place = Place()
-        self.assertTrue(hasattr(place, "name"))
-        if models.sType == "db":
-            self.assertEqual(place.name, None)
-        else:
-            pass
+    def test_Place_pep8(self):
+        """check for pep8 """
+        style = pep8.StyleGuide(quiet=True)
+        p = style.check_files(["models/state.py"])
+        self.assertEqual(p.total_errors, 0, 'fix Pep8')
 
-    def test_description_attr(self):
-        """
-            Test Class attribute
-        """
-        place = Place()
-        self.assertTrue(hasattr(place, "description"))
-        if models.sType == "db":
-            self.assertEqual(place.description, None)
-        else:
-            pass
+    def test_Place_docs(self):
+        """ check for docstring """
+        self.assertIsNotNone(Place.__doc__)
 
-    def test_number_rooms_attr(self):
-        """
-            Test Class attribute
-        """
-        place = Place()
-        self.assertTrue(hasattr(place, "number_rooms"))
-        if models.sType == "db":
-            self.assertEqual(place.number_rooms, None)
+    def test_Place_attribute_types(self):
+        """ test Place attribute types """
+        self.assertEqual(type(self.place.city_id), str)
+        self.assertEqual(type(self.place.user_id), str)
+        self.assertEqual(type(self.place.name), str)
+        self.assertEqual(type(self.place.description), str)
+        self.assertEqual(type(self.place.number_rooms), int)
+        self.assertEqual(type(self.place.number_bathrooms), int)
+        self.assertEqual(type(self.place.max_guest), int)
+        self.assertEqual(type(self.place.price_by_night), int)
+        self.assertEqual(type(self.place.latitude), float)
+        self.assertEqual(type(self.place.longitude), float)
+        self.assertEqual(type(self.place.amenity_ids), list)
 
-    def test_number_bathrooms_attr(self):
-        """
-            Test Class attribute
-        """
-        place = Place()
-        self.assertTrue(hasattr(place, "number_bathrooms"))
-        if models.sType == "db":
-            self.assertEqual(place.number_bathrooms, None)
-        else:
-            pass
+    def test_Place_is_subclass(self):
+        """ test if Place is subclass of BaseModel """
+        self.assertTrue(issubclass(self.place.__class__, BaseModel), True)
 
-    def test_max_guest_attr(self):
-        """
-            Test Class attribute
-        """
-        place = Place()
-        self.assertTrue(hasattr(place, "max_guest"))
-        if models.sType == "db":
-            self.assertEqual(place.max_guest, None)
-        else:
-            pass
+    @unittest.skipIf(os.getenv("HBNB_TYPE_STORAGE") == "db", "Place won't\
+                     save because it needs to be tied to a User and State :\\")
+    def test_Place_save(self):
+        """ test save() command """
+        self.place.save()
+        self.assertNotEqual(self.place.created_at, self.place.updated_at)
 
-    def test_price_by_night_attr(self):
-        """
-            Test Class attribute
-        """
-        place = Place()
-        self.assertTrue(hasattr(place, "price_by_night"))
-        if models.sType == "db":
-            self.assertEqual(place.price_by_night, None)
-        else:
-            pass
+    def test_Place_sa_instance_state(self):
+        """ test is _sa_instance_state has been removed """
+        self.assertNotIn('_sa_instance_state', self.place.to_dict())
 
-    def test_latitude_attr(self):
-        """
-            Test Class attribute
-        """
-        place = Place()
-        self.assertTrue(hasattr(place, "latitude"))
-        if models.sType == "db":
-            self.assertEqual(place.latitude, None)
-        else:
-            pass
 
-    def test_latitude_attr(self):
-        """
-            Test Class attribute
-        """
-        place = Place()
-        self.assertTrue(hasattr(place, "longitude"))
-        if models.sType == "db":
-            self.assertEqual(place.longitude, None)
-        else:
-            pass
-
-    def test_amenity_ids_attr(self):
-        """
-            Test Class attribute
-        """
-        place = Place()
-        self.assertTrue(hasattr(place, "amenity_ids"))
-        if models.sType == "db":
-            self.assertEqual(len(place.amenity_ids), 0)
-        else:
-            pass
-
-    def test_to_dictPlace(self):
-        """
-            test to dict method with Place and the type
-            and content
-        """
-        place = Place()
-        dict_cont = place.to_dict()
-        self.assertEqual(type(dict_cont), dict)
-        for attr in place.__dict__:
-            self.assertTrue(attr in dict_cont)
-            self.assertTrue("__class__" in dict_cont)
-
-    def test_dict_value(self):
-        """
-            test the returned dictionar values
-        """
-        time_format = "%Y-%m-%dT%H:%M:%S.%f"
-        place = Place()
-        dict_con = place.to_dict()
-        self.assertEqual(dict_con["__class__"], "Place")
-        self.assertEqual(type(dict_con["created_at"]), str)
-        self.assertEqual(type(dict_con["updated_at"]), str)
-        self.assertEqual(
-            dict_con["created_at"],
-            place.created_at.strftime(time_format)
-        )
-        self.assertEqual(
-            dict_con["updated_at"],
-            place.updated_at.strftime(time_format))
+if __name__ == "__main__":
+    unittest.main()

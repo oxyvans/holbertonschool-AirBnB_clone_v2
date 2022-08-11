@@ -1,72 +1,62 @@
 #!/usr/bin/python3
-"""
-    Test Case For city Model and its Test
-"""
-from models.base_model import BaseModel
-from models.city import City
+""" module for state reviews"""
 import unittest
-import inspect
-import time
-from datetime import datetime
-import pep8 as pcs
-from unittest import mock
-import models
+import pep8
+from models.city import City
+from models.base_model import BaseModel
+import os
 
 
 class TestCity(unittest.TestCase):
-    """
-        unitesst for City class
-    """
+    """ a class for testing City"""
 
-    def issub_class(self):
-        """
-            test if City class is sub class of base model
-        """
-        city = City()
-        self.assertIsInstance(city, BaseModel)
-        self.assertTrue(hasattr(city, "id"))
-        self.assertTrue(hasattr(city, "created_at"))
-        self.assertTrue(hasattr(city, "update_at"))
+    @classmethod
+    def setUpClass(cls):
+        """ Example Data """
+        cls.city = City()
+        cls.city.name = "San Francisco"
+        cls.city.state_id = "san-francisco"
 
-    def test_class_attribute(self):
-        """
-            test for class attribute
-        """
-        city = City()
-        self.assertTrue(hasattr(city, "name"))
-        self.assertTrue(hasattr(city, "state_id"))
-        if models.sType == "db":
-            self.assertEqual(city.state_id, None)
-            self.assertEqual(city.name, None)
-        else:
+    def teardown(cls):
+        """ tear down Class """
+        del cls.city
+
+    def tearDown(self):
+        try:
+            os.remove('file.json')
+        except FileNotFoundError:
             pass
 
-    def test_to_dictcity(self):
-        """
-            test to dict method with city and the type
-            and content
-        """
-        city = City()
-        dict_cont = city.to_dict()
-        self.assertEqual(type(dict_cont), dict)
-        for attr in city.__dict__:
-            self.assertTrue(attr in dict_cont)
-            self.assertTrue("__class__" in dict_cont)
+    def test_City_pep8(self):
+        """check for pep8 """
+        style = pep8.StyleGuide(quiet=True)
+        p = style.check_files(["models/city.py"])
+        self.assertEqual(p.total_errors, 0, 'fix Pep8')
 
-    def test_dict_value(self):
-        """
-            test the returned dictionar values
-        """
-        time_format = "%Y-%m-%dT%H:%M:%S.%f"
-        city = City()
-        dict_con = city.to_dict()
-        self.assertEqual(dict_con["__class__"], "City")
-        self.assertEqual(type(dict_con["created_at"]), str)
-        self.assertEqual(type(dict_con["updated_at"]), str)
-        self.assertEqual(
-            dict_con["created_at"],
-            city.created_at.strftime(time_format)
-        )
-        self.assertEqual(
-            dict_con["updated_at"],
-            city.updated_at.strftime(time_format))
+    def test_City_docs(self):
+        """ check for docstring """
+        self.assertIsNotNone(City.__doc__)
+
+    def test_City_attribute_types(self):
+        """ test City attribute types """
+        self.assertEqual(type(self.city.name), str)
+        self.assertEqual(type(self.city.state_id), str)
+
+    def test_City_is_subclass(self):
+        """ test if City is subclass of BaseModel """
+        self.assertTrue(issubclass(self.city.__class__, BaseModel), True)
+
+    @unittest.skipIf(os.getenv("HBNB_TYPE_STORAGE") == "db", "City won't save\
+                     because it needs to be tied to a state :\\")
+    def test_City_save(self):
+        """ test save() command """
+        self.city.save()
+        self.assertNotEqual(self.city.created_at, self.city.updated_at)
+
+    def test_City_sa_instance_state(self):
+        """ test is _sa_instance_state has been removed """
+        self.assertNotIn('_sa_instance_state', self.city.to_dict())
+
+
+if __name__ == "__main__":
+    unittest.main()

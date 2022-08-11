@@ -1,82 +1,52 @@
 #!/usr/bin/python3
-"""
-    Test Case For user Model and its Test
-"""
-from models.base_model import BaseModel
-from models.user import User
+""" a module for user tests"""
 import unittest
-import inspect
-import time
-from datetime import datetime
-import pep8 as pcs
-from unittest import mock
-import models
+import pep8
+from models.user import User
+import os
 
 
 class TestUser(unittest.TestCase):
-    """
-        unitesst for user class
-    """
+    """ a class for user tests"""
 
-    def issub_class(self):
-        """
-            test if User class is sub class of base model
-        """
-        user = User()
-        self.assertIsInstance(user, BaseModel)
-        self.assertTrue(hasattr(user, "id"))
-        self.assertTrue(hasattr(user, "created_at"))
-        self.assertTrue(hasattr(user, "update_at"))
+    @classmethod
+    def setUpClass(cls):
+        """ Example Data """
+        cls.user = User()
+        cls.user.first_name = "Madame"
+        cls.user.last_name = "Tabitha"
+        cls.user.email = "gildedlily@gmail.com"
+        cls.user.password = "gildedlily123"
 
-    def test_email(self):
-        """
-            test class attribute email
-        """
-        user = User()
-        self.assertTrue(hasattr(user, "email"))
-        if models.sType == "db":
-            self.assertEqual(user.email, None)
-        else:
+    @classmethod
+    def teardown(cls):
+        """ Tear down the class """
+        del cls.user
+
+    def tearDown(self):
+        """ Tear down the file (file storage) """
+        try:
+            os.remove("file.json")
+        except FileNotFoundError:
             pass
 
-    def test_password(self):
-        """
-            test class attribute password
-        """
-        user = User()
-        self.assertTrue(hasattr(user, "password"))
-        if models.sType == "db":
-            self.assertEqual(user.password, None)
-        else:
-            pass
+    def test_pep8_user(self):
+        """tests for pep8 """
+        style = pep8.StyleGuide(quiet=True)
+        p = style.check_files(["models/user.py"])
+        self.assertEqual(p.total_errors, 0, 'fix Pep8')
 
-    def test_name(self):
-        """
-            test class atribute first_name and last_name
-        """
-        user = User()
-        self.assertTrue(hasattr(user, "last_name"))
-        self.assertTrue(hasattr(user, "first_name"))
-        if models.sType == "db":
-            self.assertEqual(user.first_name, None)
-            self.assertEqual(user.last_name, None)
-        else:
-            pass
+    def test_docs_user(self):
+        """ check for docstrings """
+        self.assertIsNotNone(User.__doc__)
 
-    def test_dict_value(self):
-        """
-            test the returned dictionar values
-        """
-        time_format = "%Y-%m-%dT%H:%M:%S.%f"
-        user = User()
-        dict_con = user.to_dict()
-        self.assertEqual(dict_con["__class__"], "User")
-        self.assertEqual(type(dict_con["created_at"]), str)
-        self.assertEqual(type(dict_con["updated_at"]), str)
-        self.assertEqual(
-            dict_con["created_at"],
-            user.created_at.strftime(time_format)
-        )
-        self.assertEqual(
-            dict_con["updated_at"],
-            user.updated_at.strftime(time_format))
+    def test_attribute_types_User(self):
+        """test attribute type for User"""
+        self.assertEqual(type(self.user.email), str)
+        self.assertEqual(type(self.user.password), str)
+        self.assertEqual(type(self.user.first_name), str)
+        self.assertEqual(type(self.user.first_name), str)
+
+
+if __name__ == "__main__":
+    unittest.main()

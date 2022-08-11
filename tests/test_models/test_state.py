@@ -1,57 +1,58 @@
 #!/usr/bin/python3
-"""
-    Test Case For state Model and its Test
-"""
-from models.base_model import BaseModel
-from models.state import State
+""" module for state reviews"""
 import unittest
-import inspect
-import time
-from datetime import datetime
-import pep8 as pcs
-from unittest import mock
-import models
+import pep8
+from models.state import State
+from models.base_model import BaseModel
+import os
 
 
-class Teststate(unittest.TestCase):
-    """
-        unitesst for state class
-    """
+class TestState(unittest.TestCase):
+    """ a class for testing State"""
 
-    def issub_class(self):
-        """
-            test if state class is sub class of base model
-        """
-        state = State()
-        self.assertIsInstance(state, BaseModel)
-        self.assertTrue(hasattr(state, "id"))
-        self.assertTrue(hasattr(state, "created_at"))
-        self.assertTrue(hasattr(state, "update_at"))
+    @classmethod
+    def setUpClass(cls):
+        """ Example Data """
+        cls.state = State()
+        cls.state.name = "Covid-landia"
 
-    def test_name_attr(self):
-        """
-            Test that State has attribute name
-        """
-        state = State()
-        self.assertTrue(hasattr(state, "name"))
-        if models.sType == "db":
-            self.assertEqual(state.name, None)
-        pass
+    def teardown(cls):
+        """ tear down Class """
+        del cls.state
 
-    def test_dict_value(self):
-        """
-            test the returned dictionar values
-        """
-        time_format = "%Y-%m-%dT%H:%M:%S.%f"
-        state = State()
-        dict_con = state.to_dict()
-        self.assertEqual(dict_con["__class__"], "State")
-        self.assertEqual(type(dict_con["created_at"]), str)
-        self.assertEqual(type(dict_con["updated_at"]), str)
-        self.assertEqual(
-            dict_con["created_at"],
-            state.created_at.strftime(time_format)
-        )
-        self.assertEqual(
-            dict_con["updated_at"],
-            state.updated_at.strftime(time_format))
+    def tearDown(self):
+        try:
+            os.remove('file.json')
+        except FileNotFoundError:
+            pass
+
+    def test_pep8_state(self):
+        """check for pep8 """
+        style = pep8.StyleGuide(quiet=True)
+        p = style.check_files(["models/state.py"])
+        self.assertEqual(p.total_errors, 0, 'fix Pep8')
+
+    def test_docs_state(self):
+        """ check for docstring """
+        self.assertIsNotNone(State.__doc__)
+
+    def test_State_attribute_types(self):
+        """ test State attribute types """
+        self.assertEqual(type(self.state.name), str)
+
+    def test_State_is_subclass(self):
+        """ test if State is subclass of BaseModel """
+        self.assertTrue(issubclass(self.state.__class__, BaseModel), True)
+
+    def test_State_save(self):
+        """ test save() command """
+        self.state.save()
+        self.assertNotEqual(self.state.created_at, self.state.updated_at)
+
+    def test_State_sa_instance_state(self):
+        """ test is _sa_instance_state has been removed """
+        self.assertNotIn('_sa_instance_state', self.state.to_dict())
+
+
+if __name__ == "__main__":
+    unittest.main()
