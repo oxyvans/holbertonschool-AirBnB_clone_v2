@@ -5,6 +5,7 @@ from datetime import datetime
 from fabric.api import local
 from os.path import isdir
 
+
 def do_pack():
     """ tgz """
     try:
@@ -14,5 +15,6 @@ def do_pack():
         res = "versions/web_static_{}.tgz".format(time)
         local("tar -cvzf {} web_static".format(res))
         return res
-    except:
+
+    except():
         return None
