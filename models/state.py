@@ -1,7 +1,6 @@
 #!/usr/bin/python3
 """State class for AirBnb project"""
 from os import getenv
-import models
 from models.base_model import BaseModel, Base
 from models.city import City
 from sqlalchemy import Column, String
@@ -21,8 +20,9 @@ class State(BaseModel, Base):
         @property
         def cities(self):
             """ cities """
+            from models import storage
             citiesList = []
-            for city in models.storage.all(City).values():
+            for city in storage.all(City).values():
                 if self.id == city.state_id:
-                    citiesList.append(models.storage.all(City)[city])
+                    citiesList.append(city)
             return citiesList
