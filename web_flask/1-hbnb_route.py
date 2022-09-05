@@ -1,5 +1,5 @@
 #!/usr/bin/python3
-""" hello flask """
+"""task 1"""
 
 from flask import Flask
 app = Flask(__name__)
@@ -7,7 +7,7 @@ app = Flask(__name__)
 
 @app.route("/", strict_slashes=False)
 def hello():
-    """helloy flask"""
+    """say hello"""
     return "Hello HBNB!"
 
 
