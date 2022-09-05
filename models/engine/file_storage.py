@@ -52,6 +52,12 @@ class FileStorage:
         except Exception:
             pass
 
+
+    def close(self):
+        """reload()"""
+        self.reload()
+
+
     def delete(self, obj=None):
         """Deletes obj from __objects if it is inside"""
         if obj is not None:

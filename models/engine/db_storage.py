@@ -60,6 +60,11 @@ class DBStorage:
         if obj is not None:
             self.__session.delete(obj)
 
+
+    def close(self):
+        """remove()"""
+        self.__session.remove()
+
     def reload(self):
         """"""
         Base.metadata.create_all(self.__engine)
