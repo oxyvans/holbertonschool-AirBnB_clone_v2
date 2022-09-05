@@ -18,11 +18,12 @@ class State(BaseModel, Base):
                               delete-orphan")
 
     else:
-        @property
-        def cities(self):
-            """"""
-            citiesList = []
-            for city in models.storage.all(City).values():
-                if self.id == city.state_id:
-                    citiesList.append(models.storage.all(City)[city])
-            return citiesList
+        if models.storage != "db":
+            @property
+            def cities(self):
+                """ cities """
+                citiesList = []
+                for city in models.storage.all(City).values():
+                    if self.id == city.state_id:
+                        citiesList.append(models.storage.all(City)[city])
+                return citiesList
