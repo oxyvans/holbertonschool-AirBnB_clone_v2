@@ -48,9 +48,9 @@ def render(n):
 def even_odd(n):
     """ number """
     if n % 2 == 0:
-        i="even"
+        i = "even"
     else:
-        i="odd"
+        i = "odd"
     return render_template('6-number_odd_or_even.html', n=n, i=i)
 
 
