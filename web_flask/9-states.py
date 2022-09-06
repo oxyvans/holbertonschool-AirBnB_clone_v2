@@ -2,7 +2,7 @@
 """ TASK 9"""
 from flask import Flask, render_template
 from models import storage
-from models.state import State
+from models import *
 
 
 app = Flask(__name__)
@@ -22,7 +22,5 @@ def states(state_id=None):
         state_id = 'State.' + state_id
     return render_template('9-states.html', states=states, state_id=state_id)
 
-
 if __name__ == '__main__':
     app.run(host="0.0.0.0", port=5000)
-    
