@@ -21,10 +21,11 @@ def stateslist():
     List_s = sorted(List_s, key=lambda k: k.name)
     return render_template("7-states_list.html", List_s=List_s)
 
+
 @app.route("/states/<id>", strict_slashes=False)
-def states_id(s_id):
+def states_city(s_id):
     """ render  """
-    List_s = storage.all("State").values()
+    List_s = storage.all(State).values()
     for state in List_s:
         if state.id == s_id:
             return render_template("9-states.html", state=state)
